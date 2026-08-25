@@ -3,6 +3,7 @@ name = "spark-ecommerce-lakehouse"
 version = "0.1.0"
 description = "A reproducible PySpark ecommerce pipeline for learning medallion architecture, performance, streaming, testing, and ML feature engineering."
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "faker==40.28.1",
