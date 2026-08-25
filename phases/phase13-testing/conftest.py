@@ -5,7 +5,9 @@ A session-scoped SparkSession so all tests share one JVM (starting Spark per
 test would be painfully slow).
 """
 
-import sys, os
+import os
+import sys
+
 import pytest
 
 sys.path.append(os.path.dirname(__file__))          # _spark.py is local to this folder

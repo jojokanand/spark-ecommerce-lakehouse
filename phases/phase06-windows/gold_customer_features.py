@@ -10,10 +10,11 @@ as_of_date is stamped so features are reproducible "as of" a point in time
 (this matters for ML leakage -- Phase 12 goes deeper).
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
 
 AS_OF = "2026-07-04"   # pretend "today"; in prod this is a job parameter

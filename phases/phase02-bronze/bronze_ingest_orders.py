@@ -7,15 +7,19 @@ We do NOT clean or filter here (that's silver's job). We only:
     2. write it out as Parquet (columnar, typed, compressed).
 """
 
-import sys
 import os
+import sys
 
 # make "from _spark import ..." work no matter where we launch from
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql.types import (
-    StructType, StructField, StringType, TimestampType, DateType, DoubleType,
+    DateType,
+    DoubleType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
 )
 
 # ---------------------------------------------------------------------------

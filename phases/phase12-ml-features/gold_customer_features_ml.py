@@ -10,7 +10,9 @@ Upgrades over the Phase 6 version:
      zero orders still get a row (with 0s), instead of silently vanishing.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
 from pyspark.sql import functions as F

@@ -7,11 +7,13 @@ the boundary between a narrow transformation (filter) and a wide one (groupBy),
 and to identify exactly where Spark shuffles.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-from pyspark.sql.functions import col, sum as _sum   # rename: sum shadows builtin
+from pyspark.sql.functions import col  # rename: sum shadows builtin
+from pyspark.sql.functions import sum as _sum
 
 
 def main():

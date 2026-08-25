@@ -10,15 +10,17 @@ scale and can't cheaply "fix yesterday". This version:
 
 Run examples:
   # one day
-  python jobs/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-01
+  uv run python phases/phase10-incremental/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-01
   # a 7-day backfill
-  python jobs/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-07
+  uv run python phases/phase10-incremental/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-07
 """
 
-import sys, os, argparse
+import argparse
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
 from pyspark.sql.functions import broadcast
 

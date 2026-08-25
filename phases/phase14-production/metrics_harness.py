@@ -11,11 +11,15 @@ runtime spike) BEFORE a human notices a broken dashboard. A downstream test
 (test_job_metrics.py) then asserts these stay within expected bands.
 """
 
-import sys, os, time, json, datetime
+import json
+import os
+import sys
+import time
+from datetime import UTC, datetime
 from urllib.request import urlopen
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
 from pyspark.sql.functions import broadcast
 
@@ -78,7 +82,7 @@ def main():
     sh_rd, sh_wr = shuffle_bytes(spark)     # while the UI is still alive
 
     rec = {
-        "ts": datetime.datetime.now().isoformat(timespec="seconds"),
+        "ts": datetime.now(UTC).isoformat(timespec="seconds"),
         "job": "gold_daily_revenue",
         "runtime_s": round(runtime, 1),
         "input_orders": input_orders,

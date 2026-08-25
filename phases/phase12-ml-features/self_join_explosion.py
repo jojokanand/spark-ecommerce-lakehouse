@@ -11,7 +11,9 @@ dwarf millions of normal orders. This demo:
   5. shows the fix: cap basket size before the self-join.
 """
 
-import sys, os, time
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
 from pyspark.sql import functions as F

@@ -11,7 +11,9 @@ k=4 -> 6 pairs (fine). k=100 -> 4,950 pairs. k=1000 -> ~500k pairs from ONE orde
 Self-joins can explode data quadratically -- always cap basket size or pre-filter.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
 from pyspark.sql import functions as F

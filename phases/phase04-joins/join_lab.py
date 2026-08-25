@@ -8,11 +8,11 @@ Three demos:
                   the small table to every task, no shuffle of the big one).
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-from pyspark.sql import functions as F
 from pyspark.sql.functions import broadcast
 
 

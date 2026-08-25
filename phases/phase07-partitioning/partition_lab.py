@@ -10,10 +10,12 @@ Metrics per layout: #directories, #parquet files, total size, and the time +
 partition-pruning behaviour of a "one day" query.
 """
 
-import sys, os, time
+import os
+import sys
+import time
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
 
 LAB = "data/lab"

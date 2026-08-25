@@ -12,12 +12,13 @@ Run unbuffered so console output streams out live:
     python -u phases/phase11-streaming/streaming_click_metrics_live.py
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType
+from pyspark.sql.types import StringType, StructField, StructType, TimestampType
 
 LIVE_DIR = "data/landing/clickstream_live"
 CHECKPOINT = "data/checkpoints/click_live"

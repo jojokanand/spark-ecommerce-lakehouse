@@ -3,7 +3,9 @@ salt_visual.py — a 6-row, printable walkthrough of salting.
 Tiny data + SALT=3 so you can eyeball every step.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
 from pyspark.sql import functions as F

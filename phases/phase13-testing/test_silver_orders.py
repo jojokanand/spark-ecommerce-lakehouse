@@ -8,7 +8,8 @@ the silver job has a bug or the data drifted -- either way, block the pipeline.
 from pyspark.sql import functions as F
 
 SILVER = "data/silver/orders/"
-
+BRONZE = "data/bronze/orders/"
+REJECTED = "data/silver/rejected_orders/"
 
 def test_no_null_keys(spark):
     """tenant_id / order_id / customer_id / order_date must never be null."""
@@ -34,7 +35,20 @@ def test_order_id_unique_per_tenant(spark):
     assert total == distinct, f"{total - distinct} duplicate (tenant, order) keys remain"
 
 
-def test_row_count_in_expected_range(spark):
-    """sanity band: silver should retain most of the ~1M orders (scale=10)."""
-    n = spark.read.parquet(SILVER).count()
-    assert 900_000 <= n <= 1_010_000, f"unexpected silver order count: {n:,}"
+def test_row_counts_reconcile_and_retain_expected_share(spark):
+    """Silver and rejected rows must reconcile with bronze at any data scale."""
+    bronze_count = spark.read.parquet(BRONZE).count()
+    silver_count = spark.read.parquet(SILVER).count()
+    rejected_count = spark.read.parquet(REJECTED).count()
+
+    assert bronze_count > 0, "bronze orders must not be empty"
+    assert silver_count + rejected_count == bronze_count, (
+        f"row counts do not reconcile: "
+        f"{silver_count:,} silver + {rejected_count:,} rejected "
+        f"!= {bronze_count:,} bronze"
+    )
+
+    retention = silver_count / bronze_count
+    assert retention >= 0.95, (
+        f"silver retained only {retention:.1%} of bronze rows; expected at least 95%"
+    )

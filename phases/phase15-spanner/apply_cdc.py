@@ -10,14 +10,21 @@ ingestion from an OLTP source. Delta/Iceberg `MERGE INTO` automates exactly this
 It's idempotent: replaying the whole log always reconstructs the same state.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
+from pyspark.sql.types import (
+    DoubleType,
+    LongType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
+)
 from pyspark.sql.window import Window
-from pyspark.sql.types import (StructType, StructField, StringType, TimestampType,
-                               LongType, DoubleType)
 
 CDC_DIR = "data/landing/orders_cdc"
 SILVER = "data/silver/orders_current"
