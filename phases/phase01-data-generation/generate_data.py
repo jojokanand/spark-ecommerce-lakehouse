@@ -12,15 +12,15 @@ gives us total control over the two things this whole course is about:
 Later phases (bronze/silver) will read this messy data and clean it.
 
 Usage:
-    python jobs/generate_data.py                 # small default scale
-    python jobs/generate_data.py --scale 10      # 10x more rows
+    python phases/phase01-data-generation/generate_data.py
+    python phases/phase01-data-generation/generate_data.py --scale 10
 """
 
 import argparse
 import csv
 import os
 import random
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from faker import Faker
 
@@ -28,6 +28,7 @@ from faker import Faker
 # Config
 # ---------------------------------------------------------------------------
 SEED = 42                       # deterministic: same data every run
+DEFAULT_AS_OF_DATE = date(2026, 7, 4)
 LANDING = "data/landing"
 
 # The heart of the course: a deliberately SKEWED tenant distribution.
@@ -85,7 +86,7 @@ def write_csv(path, header, rows):
 # ---------------------------------------------------------------------------
 # Generators
 # ---------------------------------------------------------------------------
-def gen_tenants():
+def gen_tenants(as_of_date):
     header = ["tenant_id", "tenant_name", "tier", "signup_date"]
     rows = []
     for tenant_id, _ in TENANTS:
@@ -94,7 +95,10 @@ def gen_tenants():
             tenant_id,
             fake.company(),
             tier,
-            fake.date_between("-3y", "-1y").isoformat(),
+            fake.date_between_dates(
+                date_start= as_of_date - timedelta(days=3 * 365),
+                date_end= as_of_date - timedelta(days=365),
+            ).isoformat(),
         ])
     write_csv(f"{LANDING}/tenants/tenants.csv", header, rows)
 
@@ -118,9 +122,10 @@ def gen_products():
     write_csv(f"{LANDING}/products/products.csv", header, rows)
 
 
-def gen_customers(n):
+def gen_customers(n, as_of_date):
     header = ["tenant_id", "customer_id", "name", "email", "country", "signup_date"]
     rows = []
+    signup_start = as_of_date - timedelta(days=2 * 365)
     # Return a per-tenant list of customer ids so orders can reference real ones.
     customers_by_tenant = {t: [] for t, _ in TENANTS}
     for _ in range(n):
@@ -136,13 +141,20 @@ def gen_customers(n):
             fake.name(),
             fake.email(),
             fake.country_code(),
-            fake.date_between("-2y", "today").isoformat(),
+            fake.date_between_dates(
+                date_start=signup_start,
+                date_end=as_of_date,
+            ).isoformat(),
         ])
     write_csv(f"{LANDING}/customers/customers.csv", header, rows)
     return customers_by_tenant
 
 
-def gen_orders_and_items(n_orders, customers_by_tenant, dirty_rate=0.02):
+def gen_orders_and_items(
+        n_orders,
+        customers_by_tenant,
+        as_of_date,
+        dirty_rate=0.02):
     orders_header = [
         "tenant_id", "order_id", "customer_id", "order_ts", "order_date",
         "status", "currency", "subtotal", "tax", "shipping",
@@ -155,8 +167,7 @@ def gen_orders_and_items(n_orders, customers_by_tenant, dirty_rate=0.02):
     orders_rows = []
     items_rows = []
 
-    today = date.today()
-    start = today - timedelta(days=90)   # 90 days of history
+    start = as_of_date - timedelta(days=89)
 
     for _ in range(n_orders):
         tenant_id = weighted_tenant()
@@ -168,9 +179,14 @@ def gen_orders_and_items(n_orders, customers_by_tenant, dirty_rate=0.02):
 
         # random timestamp in the last 90 days
         order_day = start + timedelta(days=random.randint(0, 89))
-        order_ts = datetime(order_day.year, order_day.month, order_day.day,
-                            random.randint(0, 23), random.randint(0, 59))
-
+        order_ts = datetime(
+            order_day.year,
+            order_day.month,
+            order_day.day,
+            random.randint(0, 23),
+            random.randint(0, 59),
+            tzinfo=UTC,
+        )
         # 1..4 line items
         n_items = random.randint(1, 4)
         subtotal = 0.0
@@ -231,6 +247,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--scale", type=int, default=1,
                         help="multiplier on base row counts (default 1)")
+    parser.add_argument("--as-of-date", type=date.fromisoformat,
+                        default=DEFAULT_AS_OF_DATE,
+                        help="inclusive end date for the generated 90-day order window")
     args = parser.parse_args()
 
     random.seed(SEED)
@@ -240,10 +259,16 @@ def main():
     n_customers = 10_000 * s
     n_orders = 100_000 * s
 
-    print(f"Generating scale={s}: {n_customers:,} customers, {n_orders:,} orders")
-    gen_tenants()
-    customers_by_tenant = gen_customers(n_customers)
-    gen_orders_and_items(n_orders, customers_by_tenant)
+    print(
+        f"Generating scale={s}: {n_customers:,} customers, "
+        f"{n_orders:,} orders through {args.as_of_date.isoformat()}"
+    )
+    gen_tenants(args.as_of_date)
+    customers_by_tenant = gen_customers(n_customers, args.as_of_date)
+    gen_orders_and_items(n_orders,
+                         customers_by_tenant,
+                         as_of_date=args.as_of_date
+    )
     gen_products()   # LAST: so it doesn't shift the RNG stream for customers/orders
     print("Done.")
 

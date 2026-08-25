@@ -50,45 +50,43 @@ relative to it).
 
 ## Setup
 
-Requires **Java 17 or 21** and **Python 3.9–3.12** (not 3.13+ — PySpark lags new
-Python releases).
+Requires **Python 3.12**, **Java 17 or later**, and
+[`uv`](https://docs.astral.sh/uv/).
 
 ```bash
-# create an isolated environment (example with pyenv)
-pyenv virtualenv 3.12 learn_spark && pyenv local learn_spark
-pip install -r requirements.txt
+# create .venv and install the exact locked dependencies
+uv sync --locked
 
-# verify Spark runs
-python phases/phase00-setup/smoke.py
+# verify that local Spark runs
+uv run python phases/phase00-setup/smoke.py
 ```
 
-## Quickstart — build the whole lakehouse
+## Quickstart — build and validate the sample pipeline
+
+The default command generates a deterministic scale-1 dataset with 100,000 base
+orders, builds the Parquet-backed Bronze and Silver layers, materializes the daily
+revenue mart and point-in-time customer features, and runs the Phase 13 data
+contracts.
 
 ```bash
-# 1. generate the raw data (scale=10 ≈ 1M orders; use --scale 1 for a quick start)
-python phases/phase01-data-generation/generate_data.py --scale 10
-
-# 2. bronze (raw CSV -> typed Parquet)
-for j in orders customers items products; do
-  python phases/phase02-bronze/bronze_ingest_$j.py
-done
-
-# 3. silver (clean, dedupe, quarantine)
-for j in orders customers order_items products; do
-  python phases/phase03-silver/silver_$j.py
-done
-
-# 4. gold marts
-python phases/phase05-gold/gold_daily_revenue.py
-python phases/phase06-windows/gold_customer_features.py
-
-# 5. validate
-python -m pytest phases/phase13-testing/ -v
+uv run python scripts/run_sample_pipeline.py
 ```
+
+A complete scale-1 run takes approximately 1–2 minutes on a modern laptop.
+Generated data is written under `data/` and is excluded from version control.
+
+To exercise the same pipeline with approximately one million base orders:
+
+```bash
+uv run python scripts/run_sample_pipeline.py --scale 10
+```
+
+Every phase remains directly executable for focused learning; the runner provides
+the tested end-to-end path.
 
 ## Explore interactively
 ```bash
-ipython -i phases/phase08-plans-ui/explore.py
+uv run python -i phases/phase08-plans-ui/explore.py
 # then, e.g.:  daily_revenue.orderBy(F.desc('revenue')).show(5)
 ```
 

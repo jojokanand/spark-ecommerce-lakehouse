@@ -1,11 +1,16 @@
 """bronze_ingest_items.py — Phase 2 pattern for order_items (raw CSV -> Parquet)."""
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql.types import (
-    StructType, StructField, StringType, IntegerType, DoubleType,
+    DoubleType,
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
 )
 
 ITEMS_SCHEMA = StructType([

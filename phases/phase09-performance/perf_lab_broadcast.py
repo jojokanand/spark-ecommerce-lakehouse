@@ -10,11 +10,12 @@ AQE stays OFF so our config choice is what actually runs (AQE would broadcast
 the tiny table on its own and hide the contrast).
 """
 
-import sys, os, time
+import os
+import sys
+import time
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-from pyspark.sql import functions as F
 from pyspark.sql.functions import broadcast
 
 

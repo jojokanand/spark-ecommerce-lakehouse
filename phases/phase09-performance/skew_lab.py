@@ -18,6 +18,7 @@ Runs the join, prints timing, then SLEEPS so you can inspect the Spark UI:
 """
 
 import time
+
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 

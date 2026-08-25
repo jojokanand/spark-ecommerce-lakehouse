@@ -15,10 +15,12 @@ Run examples:
   python jobs/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-07
 """
 
-import sys, os, argparse
+import argparse
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
 from pyspark.sql.functions import broadcast
 

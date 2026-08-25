@@ -18,12 +18,14 @@ After it loads you'll have these ready to use:
     spark.sql("select tenant_id, count(*) c from orders group by tenant_id order by c desc").show()
 """
 
-import sys, os
+import os
+import sys
+
+# Keep F available in the namespace for interactive examples.
+from pyspark.sql import functions as F  # noqa: F401
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-# import common functions into the namespace so you can use them at the prompt
-from pyspark.sql import functions as F  # e.g. F.col, F.sum, F.count, F.desc
 
 spark = get_spark("explore")
 
@@ -35,7 +37,8 @@ def _load(path, reader):
         print(f"  (skip {path}: {type(e).__name__})")
         return None
 
-_csv = lambda p: spark.read.option("header", True).csv(p)
+def _csv(path):
+    return spark.read.option("header", True).csv(path)
 
 # silver (clean) tables
 orders    = _load("data/silver/orders/",       spark.read.parquet)

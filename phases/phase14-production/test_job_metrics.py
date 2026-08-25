@@ -9,7 +9,9 @@ explosion, runtime spike -- fails the build instead of poisoning dashboards.
 No Spark needed: it's just reading the JSONL log.
 """
 
-import os, json
+import json
+import os
+
 import pytest
 
 LOG = "data/gold/_job_metrics/metrics.jsonl"
@@ -27,7 +29,7 @@ def latest_metric():
     if not os.path.exists(LOG):
         pytest.skip("no metrics log yet — run metrics_harness.py first")
     with open(LOG) as f:
-        lines = [l for l in f if l.strip()]
+        lines = [line for line in f if line.strip()]
     return json.loads(lines[-1])          # the most recent run
 
 

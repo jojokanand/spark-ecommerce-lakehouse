@@ -16,11 +16,12 @@ While this runs, open http://localhost:4040 -> Stages, and watch:
   - the 'Spill (Memory/Disk)' columns light up at 4 partitions
 """
 
-import sys, os, time
+import os
+import sys
+import time
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-from pyspark.sql import functions as F
 
 
 def run(spark, n_parts, aqe):

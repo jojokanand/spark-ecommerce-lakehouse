@@ -1,10 +1,11 @@
 """bronze_ingest_products.py — Phase 2 pattern for products (raw CSV -> Parquet)."""
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-from pyspark.sql.types import StructType, StructField, StringType, DoubleType
+from pyspark.sql.types import DoubleType, StringType, StructField, StructType
 
 PRODUCTS_SCHEMA = StructType([
     StructField("tenant_id",    StringType(), False),

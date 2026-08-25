@@ -16,12 +16,13 @@ Key streaming pieces:
   maxFilesPerTrigger=1   - one file per micro-batch, so we SEE batches accumulate.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
-from pyspark.sql.types import StructType, StructField, StringType, TimestampType
+from pyspark.sql.types import StringType, StructField, StructType, TimestampType
 
 STREAM_DIR = "data/landing/clickstream_stream"
 CHECKPOINT = "data/checkpoints/click_metrics"

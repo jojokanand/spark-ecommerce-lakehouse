@@ -15,8 +15,8 @@ Summary Metrics table, the 'Spill (Memory)' / 'Spill (Disk)' rows.
 """
 
 import time
+
 from pyspark.sql import SparkSession
-from pyspark.sql import functions as F
 
 spark = (
     SparkSession.builder

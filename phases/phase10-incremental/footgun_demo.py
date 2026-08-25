@@ -7,7 +7,9 @@ DEFAULT (static) partitionOverwriteMode. Static + overwrite deletes the WHOLE
 target directory first -> every other date partition is destroyed.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
 from pyspark.sql import functions as F

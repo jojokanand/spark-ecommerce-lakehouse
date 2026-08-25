@@ -14,10 +14,12 @@ Salting idea:
 Result is identical; only the physical distribution changes. We time both.
 """
 
-import sys, os, time
+import os
+import sys
+import time
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
 from pyspark.sql import functions as F
 
 FANOUT = 30    # rows per tenant in the dim -> heavier per-task work so time skew shows

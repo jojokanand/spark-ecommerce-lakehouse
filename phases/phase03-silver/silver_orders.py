@@ -11,11 +11,12 @@ This gives airtight accounting: bronze rows == silver + rejected, and every
 rejected row tells you WHY it was rejected.
 """
 
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__))
 from _spark import get_spark
-
-from pyspark.sql.functions import col, row_number, when, lit
+from pyspark.sql.functions import col, lit, row_number, when
 from pyspark.sql.window import Window
 
 

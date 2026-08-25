@@ -10,8 +10,12 @@ Usage:
   python jobs/generate_clickstream.py --files 3 --events 500 # 3 files x 500 events
 """
 
-import argparse, json, os, random, time
-from datetime import datetime, timedelta
+import argparse
+import json
+import os
+import random
+import time
+from datetime import UTC, datetime, timedelta
 
 # skewed tenant distribution (inlined so this phase folder is self-contained)
 TENANTS = [
@@ -36,7 +40,7 @@ EVENT_TYPES = ["view", "view", "view", "click", "add_to_cart", "search", "purcha
 DEVICES = ["mobile", "mobile", "desktop", "tablet"]
 
 # a FIXED base time so 1-minute windows are reproducible; events spread over 10 min
-BASE_TS = datetime(2026, 7, 4, 12, 0, 0)
+BASE_TS = datetime(2026, 7, 4, 12, 0, 0, tzinfo=UTC)
 
 
 def make_event(base_ts=BASE_TS, span=600):
@@ -47,7 +51,7 @@ def make_event(base_ts=BASE_TS, span=600):
         "event_id": f"e_{random.getrandbits(64):016x}",
         "session_id": f"s_{random.getrandbits(48):012x}",
         "customer_id": f"c_{random.getrandbits(48):012x}",
-        "event_ts": ts.strftime("%Y-%m-%d %H:%M:%S"),
+        "event_ts": ts.isoformat(timespec="seconds"),
         "event_date": ts.strftime("%Y-%m-%d"),
         "event_type": random.choice(EVENT_TYPES),
         "product_id": f"p_{t[-3:]}_{random.randint(1, 200):04d}",
@@ -67,12 +71,12 @@ def main():
     args = ap.parse_args()
 
     if args.now:
-        base_ts, span = datetime.now() - timedelta(seconds=90), 90
+        base_ts, span = datetime.now(UTC) - timedelta(seconds=90), 90
     else:
         base_ts, span = BASE_TS, 600
 
     os.makedirs(args.out, exist_ok=True)
-    for i in range(args.files):
+    for _ in range(args.files):
         # unique name (timestamp + random) so each file is "new" to the stream
         fname = f"events_{int(time.time()*1000)}_{random.getrandbits(16):04x}.json"
         path = os.path.join(args.out, fname)
