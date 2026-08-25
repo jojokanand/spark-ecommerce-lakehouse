@@ -3,9 +3,7 @@ explore.py — an interactive scratchpad for poking at the lakehouse.
 
 Launch it so Python STAYS interactive after loading (the -i flag):
 
-    ipython -i jobs/explore.py        # nicest: tab-complete + history
-    # or
-    python  -i jobs/explore.py        # plain REPL, works fine too
+    uv run python -i phases/phase08-plans-ui/explore.py
 
 After it loads you'll have these ready to use:
     spark                 the SparkSession

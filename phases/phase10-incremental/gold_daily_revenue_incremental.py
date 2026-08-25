@@ -10,9 +10,9 @@ scale and can't cheaply "fix yesterday". This version:
 
 Run examples:
   # one day
-  python jobs/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-01
+  uv run python phases/phase10-incremental/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-01
   # a 7-day backfill
-  python jobs/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-07
+  uv run python phases/phase10-incremental/gold_daily_revenue_incremental.py --start-date 2026-06-01 --end-date 2026-06-07
 """
 
 import argparse

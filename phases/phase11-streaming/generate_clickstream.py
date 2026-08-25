@@ -6,8 +6,8 @@ new data. So this writer drops one-or-more JSON-Lines files into that folder,
 with unique names, so every run ADDS files (simulating events arriving over time).
 
 Usage:
-  python jobs/generate_clickstream.py                       # 1 file, 200 events
-  python jobs/generate_clickstream.py --files 3 --events 500 # 3 files x 500 events
+  uv run python phases/phase11-streaming/generate_clickstream.py                       # 1 file, 200 events
+  uv run python phases/phase11-streaming/generate_clickstream.py --files 3 --events 500 # 3 files x 500 events
 """
 
 import argparse
