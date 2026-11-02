@@ -17,3 +17,4 @@ venv/
 # spark local metastore
 metastore_db/
 derby.log
+.env
